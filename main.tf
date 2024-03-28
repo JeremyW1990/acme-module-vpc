@@ -4,7 +4,7 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = true
 
   tags = {
-    Name = var.vpc_name
+    Name = "${var.environment}-${var.vpc_name}"
   }
 }
 
@@ -16,7 +16,7 @@ resource "aws_subnet" "public" {
   availability_zone       = element(var.availability_zones, count.index)
 
   tags = {
-    Name = "${var.vpc_name}-public-${count.index}"
+    Name = "${var.environment}-${var.vpc_name}-public-${count.index}"
   }
 }
 
@@ -24,7 +24,7 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "${var.vpc_name}-igw"
+    Name = "${var.environment}-${var.vpc_name}-igw"
   }
 }
 
@@ -37,7 +37,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "${var.vpc_name}-public"
+    Name = "${var.environment}-${var.vpc_name}-public"
   }
 }
 
@@ -48,8 +48,8 @@ resource "aws_route_table_association" "public" {
 }
 
 resource "aws_security_group" "web_sg" {
-  name        = "${var.vpc_name}-web-sg"
-  description = "Security group for web servers"
+  name        = "${var.environment}-${var.vpc_name}-web-sg"
+  description = "Security group for web servers in ${var.environment} environment"
   vpc_id      = aws_vpc.main.id
 
   # Inbound HTTP access from anywhere
@@ -69,7 +69,7 @@ resource "aws_security_group" "web_sg" {
   }
 
   tags = {
-    Name = "${var.vpc_name}-web-sg"
+    Name = "${var.environment}-${var.vpc_name}-web-sg"
   }
 }
 
